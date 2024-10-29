@@ -1,6 +1,7 @@
 # members/views.py
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
 from .models import Property
@@ -16,9 +17,9 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('home')
+            return redirect('dashboard')
         else:
-            return render(request, 'login.html', {'error': 'Invalid credentials'})
+            messages.error(request, 'Invalid username or password')
     return render(request, 'login.html')
 
 def property_list_view(request):
@@ -37,3 +38,15 @@ def signup_view(request):
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
+
+@login_required
+def profile_view(request):
+    return render(request, 'profile.html', {'user': request.user})
+
+def logout_view(request):
+    logout(request)
+    return redirect('login')
+
+@login_required
+def dashboard_view(request):
+    return render(request, 'dashboard.html')
