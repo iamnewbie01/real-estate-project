@@ -12,11 +12,11 @@
 <body>
     <header class = "navbar">
         <h1><a href="{% url 'home' %}">Real Estate</a></h1>
-        <div class="navlinks">
+        <nav class="navlinks">
             <a href="{% url 'login' %}">Login</a> |
             <a href="{% url 'property_list' %}">Properties</a> |
             <a href="{% url 'signup' %}">Sign Up</a>
-        </div>
+        </nav>
     </header>
     <div class="content">
         {% block content %}{% endblock %}
