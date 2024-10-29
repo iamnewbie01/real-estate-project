@@ -1,0 +1,21 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Property, Review
+from .forms import ReviewForm  # We will create this form in the next step
+
+@login_required
+def rate_property_view(request, property_id):
+    property = get_object_or_404(Property, id=property_id)
+    
+    if request.method == 'POST':
+        form = ReviewForm(request.POST)
+        if form.is_valid():
+            review = form.save(commit=False)
+            review.buyer = request.user.buyer  # Assuming each user has a Buyer profile
+            review.property = property
+            review.save()
+            return redirect('property_detail', property_id=property.id)  # Redirect to property detail page
+    else:
+        form = ReviewForm()
+
+    return render(request, 'members/rate_property.html', {'form': form, 'property': property})
