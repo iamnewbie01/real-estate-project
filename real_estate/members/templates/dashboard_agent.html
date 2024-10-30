@@ -1,0 +1,25 @@
+<!-- members/templates/members/dashboard.html -->
+{% load static%}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">  <!-- Link to your CSS -->
+</head>
+<body>
+    <h1>Welcome to Your Dashboard, {{ user.username }}!</h1>
+    <nav>
+        <ul>
+            <li><a href="{% url 'profile' %}">Profile</a></li>
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+            <!-- Add more links as needed -->
+        </ul>
+    </nav>
+    <div>
+        <h2>Your to sell properties</h2>
+        <!-- You can display user-specific data here -->
+    </div>
+</body>
+</html>
