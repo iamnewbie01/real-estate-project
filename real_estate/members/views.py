@@ -3,6 +3,9 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
+from .forms import AgentSignUpForm
+from .models import Agent
+from django.http import HttpResponseForbidden
 
 from .models import Property
 from .forms import SignUpForm
@@ -50,3 +53,38 @@ def logout_view(request):
 @login_required
 def dashboard_view(request):
     return render(request, 'dashboard.html')
+
+def agent_dashboard_view(request):
+    return render(request,'dashboard_agent.html')
+
+def agent_signup(request):
+    if request.method == 'POST':
+        form = AgentSignUpForm(request.POST)
+        if form.is_valid():
+            agent = form.save(commit=False)
+            agent.user = request.user  # Link to the current user
+            agent.save()
+            return redirect('agent_dashboard')  # Redirect to an agent dashboard or home page
+    else:
+        form = AgentSignUpForm()
+    return render(request, 'agent_signup.html', {'form': form})
+
+
+def agent_login_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            # Check if the user is an agent
+            try:
+                agent = Agent.objects.get(user=user)
+                login(request, user)
+                return redirect('agent_dashboard')  # Redirect to the agent dashboard if the user is an agent
+            except Agent.DoesNotExist:
+                messages.error(request, 'You do not have agent access.')
+                return HttpResponseForbidden("You do not have agent access.")
+        else:
+            messages.error(request, 'Invalid username or password')
+    return render(request, 'agent_login.html')
