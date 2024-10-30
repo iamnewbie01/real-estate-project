@@ -1,27 +1,23 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from .models import Agent
 
 class SignUpForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, label='Password')
     confirm_password = forms.CharField(widget=forms.PasswordInput, label='Confirm Password')
 
-    ROLE_CHOICES = [
-        ('buyer', 'Buyer'),
-        ('seller', 'Seller'),
-        ('agent', 'Agent'),
-        ('landlord', 'Landlord'),
-        ('renter', 'Renter'),
-    ]
-    role = forms.ChoiceField(choices=ROLE_CHOICES, label='Role')
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password']
+        fields = ['username', 'email', 'password' , 'first_name' , 'last_name']
 
     def __init__(self, *args, **kwargs):
         super(SignUpForm, self).__init__(*args, **kwargs)
         self.fields['email'].required = True
+        self.fields['first_name'].required = True
+        self.fields['last_name'].required = True
+        
 
     def clean(self):
         cleaned_data = super().clean()
@@ -37,3 +33,18 @@ class SignUpForm(forms.ModelForm):
             self.add_error('email', "Email already exists")
         
         return cleaned_data
+
+class AgentSignUpForm(forms.ModelForm):
+    class Meta:
+        model = Agent
+        fields = ['license_number', 'phone', 'city']
+        widgets = {
+            'phone': forms.TextInput(attrs={'placeholder': 'Phone'}),
+            'license_number': forms.TextInput(attrs={'placeholder': 'License Number'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['city'].required = True
+        self.fields['phone'].required = True
+        self.fields['license_number'].required = True
