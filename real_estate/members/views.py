@@ -88,3 +88,17 @@ def agent_login_view(request):
         else:
             messages.error(request, 'Invalid username or password')
     return render(request, 'agent_login.html')
+
+@login_required
+def buy_property_view(request):
+    # Logic for buying properties (this can be modified as per requirements)
+    properties = Property.objects.filter(is_rented=False)  # Example: only show available properties
+    return render(request, 'buy_property.html', {'properties': properties})
+
+@login_required
+def sell_property_view(request):
+    # Logic for selling properties (this can be modified as per requirements)
+    if request.method == 'POST':
+        # Handle property submission here (you may want to create a form for this)
+        pass
+    return render(request, 'sell_property.html')

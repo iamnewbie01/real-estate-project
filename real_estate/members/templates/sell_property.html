@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Sell Your Property</h2>
+<form method="POST">
+    {% csrf_token %}
+    <!-- You can add fields for the property details here -->
+    <input type="text" name="address" placeholder="Property Address" required>
+    <input type="number" name="price" placeholder="Price" required>
+    <input type="submit" value="Submit">
+</form>
+{% endblock %}
