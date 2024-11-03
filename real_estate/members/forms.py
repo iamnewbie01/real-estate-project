@@ -1,50 +1,58 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from .models import Agent
+from .models import Agent,City
+
 
 class SignUpForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, label='Password')
     confirm_password = forms.CharField(widget=forms.PasswordInput, label='Confirm Password')
+    
+    SIGNUP_OPTIONS = [
+        ('option1', 'Regular Signup'),
+        ('option2', 'Agent Signup'),
+    ]
+    signup_option = forms.ChoiceField(choices=SIGNUP_OPTIONS, widget=forms.RadioSelect, label="Signup Type")
 
+    license_number = forms.CharField(required=False, label='License Number', widget=forms.TextInput(attrs={'placeholder': 'License Number'}))
+    phone = forms.CharField(required=False, label='Phone', widget=forms.TextInput(attrs={'placeholder': 'Phone'}))
+    # city = forms.CharField(required=False, label='City', widget=forms.TextInput(attrs={'placeholder': 'City'}))
+    city = forms.ModelChoiceField(queryset=City.objects.all(), required=False)
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'password' , 'first_name' , 'last_name']
-
-    def __init__(self, *args, **kwargs):
-        super(SignUpForm, self).__init__(*args, **kwargs)
-        self.fields['email'].required = True
-        self.fields['first_name'].required = True
-        self.fields['last_name'].required = True
-        
+        fields = ['username', 'email', 'password', 'confirm_password', 'first_name', 'last_name', 'signup_option', 'license_number', 'phone', 'city']
 
     def clean(self):
         cleaned_data = super().clean()
         password = cleaned_data.get("password")
         confirm_password = cleaned_data.get("confirm_password")
+        email = cleaned_data.get("email")
+        username = cleaned_data.get("username")
+        first_name = cleaned_data.get("first_name")
+        last_name = cleaned_data.get("last_name")
 
         if password and confirm_password and password != confirm_password:
-            raise forms.ValidationError("Passwords do not match")
-        
-        email = cleaned_data.get("email")
-        
-        if User.objects.filter(email=email).exists():
+            self.add_error('confirm_password', "Passwords do not match")
+
+        if email and User.objects.filter(email=email).exists():
             self.add_error('email', "Email already exists")
-        
+
+        if username and User.objects.filter(username=username).exists():
+            self.add_error('username', "Username already exists")
+
+        if not first_name:
+            self.add_error('first_name', "First name is required.")
+        if not last_name:
+            self.add_error('last_name', "Last name is required.")
+
+        if cleaned_data.get("signup_option") == 'option2':
+            if not cleaned_data.get("license_number"):
+                self.add_error('license_number', "License Number is required for Agent Signup.")
+            if not cleaned_data.get("phone"):
+                self.add_error('phone', "Phone is required for Agent Signup.")
+            if not cleaned_data.get("city"):
+                self.add_error('city', "City is required for Agent Signup.")
+
         return cleaned_data
 
-class AgentSignUpForm(forms.ModelForm):
-    class Meta:
-        model = Agent
-        fields = ['license_number', 'phone', 'city']
-        widgets = {
-            'phone': forms.TextInput(attrs={'placeholder': 'Phone'}),
-            'license_number': forms.TextInput(attrs={'placeholder': 'License Number'}),
-        }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['city'].required = True
-        self.fields['phone'].required = True
-        self.fields['license_number'].required = True
