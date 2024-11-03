@@ -1,7 +1,8 @@
 from django import forms
+from django.forms import modelformset_factory
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from .models import Agent,City
+from .models import Agent,City,Property,PropertyImage
 
 
 class SignUpForm(forms.ModelForm):
@@ -56,3 +57,14 @@ class SignUpForm(forms.ModelForm):
 
         return cleaned_data
 
+class PropertyForm(forms.ModelForm):
+    class Meta:
+        model = Property
+        fields = ['address', 'city', 'price', 'property_type', 'is_rented']  # Include other fields as needed
+
+class PropertyImageForm(forms.ModelForm):
+    class Meta:
+        model = PropertyImage
+        fields = ['image', 'description']
+
+PropertyImageFormSet = modelformset_factory(PropertyImage, form=PropertyImageForm, extra=3)

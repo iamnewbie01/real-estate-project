@@ -3,9 +3,10 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import SignUpForm
-from .models import Agent, Property
+from .forms import SignUpForm,PropertyForm,PropertyImageFormSet
+from .models import Agent
 from django.http import HttpResponseForbidden
+from .models import Property,PropertyImage,Seller
 
 def home_view(request):
     return render(request, 'home.html')
@@ -109,5 +110,24 @@ def buy_property_view(request):
 @login_required
 def sell_property_view(request):
     if request.method == 'POST':
-        pass
-    return render(request, 'sell_property.html')
+        form = PropertyForm(request.POST)
+        formset = PropertyImageFormSet(request.POST, request.FILES)
+
+        if form.is_valid() and formset.is_valid():
+            property_instance = form.save(commit=False)
+            
+            seller, created = Seller.objects.get_or_create(user=request.user)
+            property_instance.seller = seller
+            property_instance.save()
+
+            for image_form in formset:
+                image_instance = image_form.save(commit=False)
+                image_instance.property = property_instance
+                image_instance.save()
+
+            return redirect('dashboard')  # Redirect to dashboard or another page
+    else:
+        form = PropertyForm()
+        formset = PropertyImageFormSet()
+
+    return render(request, 'sell_property.html', {'form': form, 'formset': formset})

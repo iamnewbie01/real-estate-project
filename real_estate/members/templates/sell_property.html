@@ -1,12 +1,23 @@
+<!-- sell_property.html -->
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Sell Your Property</h2>
-<form method="POST">
-    {% csrf_token %}
-    <!-- You can add fields for the property details here -->
-    <input type="text" name="address" placeholder="Property Address" required>
-    <input type="number" name="price" placeholder="Price" required>
-    <input type="submit" value="Submit">
-</form>
-{% endblock %}
+    
+
+    
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}  <!-- This will render all fields from the form -->
+        
+        <h3>Upload Property Images</h3>
+        {{ formset.management_form }}
+        {% for form in formset %}
+            {{ form.as_p }}
+        {% endfor %}
+        
+        <button type="submit">Sell Property</button>
+    </form>
+
+
+{%endblock%}

@@ -50,7 +50,6 @@ class Property(models.Model):
         ('house', 'House'),
         ('land', 'Land')
     ])
-    available_from = models.DateField()
     is_rented = models.BooleanField(default=False)
 
     def __str__(self):
@@ -96,3 +95,8 @@ class Review(models.Model):
 
     def __str__(self):
         return f"Review by {self.buyer} for {self.property}"
+
+class PropertyImage(models.Model):
+    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name="images")
+    image = models.ImageField(upload_to='property_images/')
+    description = models.CharField(max_length=255, blank=True, null=True)
