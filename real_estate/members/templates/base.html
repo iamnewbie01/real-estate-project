@@ -9,14 +9,22 @@
     <link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
 <body>
-    <header class = "navbar">
+    <header class="navbar">
         <h1><a href="{% url 'home' %}">Real Estate</a></h1>
-        <nav class="navlinks">
-            <a href="{% url 'login' %}">Login</a> |
-            <a href="{% url 'property_list' %}">Properties</a> |
-            <a href="{% url 'signup' %}">Sign Up</a>
-        </nav>
+        {% if user.is_authenticated %}
+            <nav>
+                <ul>
+                    {% if user.agent %}
+                        <li><a href="{% url 'agent_dashboard' %}">Agent Dashboard</a></li>
+                    {% else %}
+                        <li><a href="{% url 'dashboard' %}">Dashboard</a></li>
+                    {% endif %}
+                    <li><a href="{% url 'logout' %}">Logout</a></li>
+                </ul>
+            </nav>
+        {% endif %}
     </header>
+    
     <div class="content">
         {% block content %}{% endblock %}
     </div>

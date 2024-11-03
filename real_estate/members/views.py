@@ -18,7 +18,11 @@ def login_view(request):
         user = authenticate(request, username=username, password=password)
         if user is not None:
             login(request, user)
-            return redirect('dashboard')
+            # Check if the user has an Agent profile
+            if hasattr(user, 'agent'):
+                return redirect('agent_dashboard')
+            else:
+                return redirect('dashboard')
         else:
             messages.error(request, 'Invalid username or password')
     return render(request, 'login.html')
