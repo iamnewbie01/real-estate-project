@@ -1,4 +1,3 @@
-<!-- templates/sell_property.html -->
 {% extends 'base.html' %}
 {% block content %}
     <h2>Sell Property</h2>
@@ -21,25 +20,26 @@
     </form>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function(){
-            let formIndex = {{ formset.total_form_count }};
+        document.addEventListener('DOMContentLoaded', function() {
+            let formIndex = 0;
             const container = document.getElementById('image-container');
             const addImageButton = document.getElementById('add-image-button');
-
+    
             addImageButton.addEventListener('click', function() {
-                const newForm = document.createElement('div');
-                newForm.classList.add('image-upload');
-                newForm.innerHTML = `
-                    <label for="id_form-${formIndex}-image">Image:</label>
-                    <input type="file" name="form-${formIndex}-image" id="id_form-${formIndex}-image">
-                    <label for="id_form-${formIndex}-description">Description:</label>
-                    <input type="text" name="form-${formIndex}-description" id="id_form-${formIndex}-description">
-                `;
-                container.appendChild(newForm);
-
-                // Update the total form count in the management form
-                document.getElementById('id_form-TOTAL_FORMS').value = ++formIndex;
+            const newForm = document.createElement('div');
+            newForm.classList.add('image-upload');
+            newForm.innerHTML = `
+                <label for="id_form-${formIndex}-image">Image:</label>
+                <input type="file" name="form-${formIndex}-image" id="id_form-${formIndex}-image">
+                <label for="id_form-${formIndex}-description">Description:</label>
+                <input type="text" name="form-${formIndex}-description" id="id_form-${formIndex}-description">
+            `;
+            container.appendChild(newForm);
+            
+            // Increment the form count in the management form
+            document.getElementById('id_form-TOTAL_FORMS').value = ++formIndex;
             });
+
         });
     </script>
 {% endblock %}
