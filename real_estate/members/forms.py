@@ -61,6 +61,18 @@ class PropertyForm(forms.ModelForm):
     class Meta:
         model = Property
         fields = ['address', 'city', 'price', 'property_type', 'is_rented']
+        widgets = {
+            'price': forms.TextInput(attrs={
+                'placeholder': 'Enter price',
+                'onfocus': "this.placeholder = ''",
+                'onblur': "this.placeholder = 'Enter price'"
+            }),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['price'].help_text = "If for rent, write rent per month."
+
 
 class PropertyImageForm(forms.ModelForm):
     class Meta:
