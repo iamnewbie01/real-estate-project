@@ -89,7 +89,7 @@ class Favorite(models.Model):
 class Review(models.Model):
     buyer = models.ForeignKey(Buyer, on_delete=models.CASCADE)
     property = models.ForeignKey(Property, on_delete=models.CASCADE)
-    rating = models.PositiveSmallIntegerField()  # 1 to 5 scale
+    rating = models.PositiveSmallIntegerField()
     comment = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

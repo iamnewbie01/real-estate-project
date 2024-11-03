@@ -108,7 +108,7 @@ def agent_login_view(request):
 
 @login_required
 def buy_property_view(request):
-    properties = Property.objects.filter(is_rented=False)
+    properties = Property.objects.all()
     return render(request, 'buy_property.html', {'properties': properties})
 
 @login_required
