@@ -115,18 +115,16 @@ def buy_property_view(request):
 def sell_property_view(request):
     if request.method == 'POST':
         form = PropertyForm(request.POST)
-        formset = PropertyImageFormSet(request.POST, request.FILES)
-        # formset=1
+        formset = PropertyImageFormSet(request.POST, request.FILES, queryset=PropertyImage.objects.none())
 
         if form.is_valid() and formset.is_valid():
             property_instance = form.save(commit=False)
-            
             seller, created = Seller.objects.get_or_create(user=request.user)
             property_instance.seller = seller
             property_instance.save()
 
             for image_form in formset:
-                if image_form.cleaned_data.get('image'):  # Ensure image field is not empty
+                if image_form.cleaned_data.get('image'):
                     image_instance = image_form.save(commit=False)
                     image_instance.property = property_instance
                     image_instance.save()
@@ -137,7 +135,7 @@ def sell_property_view(request):
             messages.error(request, 'There were errors in your submission.')
     else:
         form = PropertyForm()
-        formset = PropertyImageFormSet()
+        formset = PropertyImageFormSet(queryset=PropertyImage.objects.none())
 
     return render(request, 'sell_property.html', {'form': form, 'formset': formset})
 
