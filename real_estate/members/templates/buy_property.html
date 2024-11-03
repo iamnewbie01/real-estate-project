@@ -4,7 +4,9 @@
 <h2>Available Properties for Purchase</h2>
 <ul>
     {% for property in properties %}
-        <li>{{ property.address }} - ${{ property.price }}</li>
+    <li>
+        <a href="{% url 'property_detail' property.id %}">{{ property.address }} - ${{ property.price }}</a>
+    </li>    
     {% endfor %}
 </ul>
 {% endblock %}

@@ -1,5 +1,5 @@
 # members/views.py
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -140,3 +140,21 @@ def sell_property_view(request):
         formset = PropertyImageFormSet()
 
     return render(request, 'sell_property.html', {'form': form, 'formset': formset})
+
+def property_detail_view(request, property_id):
+    # Retrieve the property with the specified ID or return a 404 error if not found
+    property_instance = get_object_or_404(Property, id=property_id)
+    
+    # Fetch related images, if needed
+    images = property_instance.images.all()
+    
+    if not images:
+        image_url = None  # Or set a default image URL
+    else:
+        image_url = images[0].image.url
+    
+    return render(request, 'property_detail.html', {
+        'property': property_instance,
+        'images': images,
+        'image_url': image_url
+    })

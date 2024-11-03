@@ -1,0 +1,31 @@
+<!-- property_detail.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Property Details</h2>
+
+<div>
+    <h3>{{ property.property_type }} at {{ property.address }}</h3>
+    <p><strong>City:</strong> {{ property.city }}</p>
+    <p><strong>Price:</strong> ${{ property.price }}</p>
+    <p><strong>Is Rented:</strong> {{ property.is_rented|yesno:"Yes,No" }}</p>
+    
+    <h4>Images:</h4>
+    {% if images %}
+        <div>
+            {% for image in images %}
+                
+                {% if image.image %}
+                    <img src="{{ image.image.url }}" alt="Property image" style="width: 300px; height: auto;">
+                {% comment %} {% else %}
+                    <p>No image associated with this property image record.</p> {% endcomment %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No images available for this property.</p>
+    {% endif %}
+</div>
+
+<a href="{% url 'dashboard' %}">Back to Dashboard</a>
+{% endblock %}
