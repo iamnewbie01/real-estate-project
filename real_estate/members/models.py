@@ -98,5 +98,13 @@ class Review(models.Model):
 
 class PropertyImage(models.Model):
     property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name="images")
-    image = models.ImageField(upload_to='property_images/')
+    image = models.ImageField(upload_to='property_images/%Y/%m/%d/')  # Default path
     description = models.CharField(max_length=255, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if self.property:
+            self.image.name = f'property_{self.property.id}/{self.image.name}'
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Image for {self.property} - {self.description or 'No Description'}"
