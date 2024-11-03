@@ -130,8 +130,12 @@ def sell_property_view(request):
                     image_instance.save()
 
             messages.success(request, 'Property and images have been uploaded successfully.')
-            return redirect('dashboard')
+            return redirect('property_detail', property_id=property_instance.id)
+
         else:
+            # Log errors for debugging
+            print(form.errors)
+            print(formset.errors)
             messages.error(request, 'There were errors in your submission.')
     else:
         form = PropertyForm()
