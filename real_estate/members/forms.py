@@ -60,11 +60,11 @@ class SignUpForm(forms.ModelForm):
 class PropertyForm(forms.ModelForm):
     class Meta:
         model = Property
-        fields = ['address', 'city', 'price', 'property_type', 'is_rented']  # Include other fields as needed
+        fields = ['address', 'city', 'price', 'property_type', 'is_rented']
 
 class PropertyImageForm(forms.ModelForm):
     class Meta:
         model = PropertyImage
         fields = ['image', 'description']
 
-PropertyImageFormSet = modelformset_factory(PropertyImage, form=PropertyImageForm, extra=3)
+PropertyImageFormSet = modelformset_factory(PropertyImage, form=PropertyImageForm, extra=1)

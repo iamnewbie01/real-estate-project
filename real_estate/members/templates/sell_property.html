@@ -1,23 +1,45 @@
-<!-- sell_property.html -->
+<!-- templates/sell_property.html -->
 {% extends 'base.html' %}
-
 {% block content %}
-    
-
-    
-
+    <h2>Sell Property</h2>
     <form method="POST" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form.as_p }}  <!-- This will render all fields from the form -->
+        {{ form.as_p }}
         
         <h3>Upload Property Images</h3>
         {{ formset.management_form }}
-        {% for form in formset %}
-            {{ form.as_p }}
-        {% endfor %}
-        
+        <div id="image-container">
+            {% for form in formset %}
+                <div class="image-upload">
+                    {{ form.as_p }}
+                </div>
+            {% endfor %}
+        </div>
+
+        <button type="button" id="add-image-button">Add Image</button>
         <button type="submit">Sell Property</button>
     </form>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            let formIndex = {{ formset.total_form_count }};
+            const container = document.getElementById('image-container');
+            const addImageButton = document.getElementById('add-image-button');
 
-{%endblock%}
+            addImageButton.addEventListener('click', function() {
+                const newForm = document.createElement('div');
+                newForm.classList.add('image-upload');
+                newForm.innerHTML = `
+                    <label for="id_form-${formIndex}-image">Image:</label>
+                    <input type="file" name="form-${formIndex}-image" id="id_form-${formIndex}-image">
+                    <label for="id_form-${formIndex}-description">Description:</label>
+                    <input type="text" name="form-${formIndex}-description" id="id_form-${formIndex}-description">
+                `;
+                container.appendChild(newForm);
+
+                // Update the total form count in the management form
+                document.getElementById('id_form-TOTAL_FORMS').value = ++formIndex;
+            });
+        });
+    </script>
+{% endblock %}

@@ -116,6 +116,7 @@ def sell_property_view(request):
     if request.method == 'POST':
         form = PropertyForm(request.POST)
         formset = PropertyImageFormSet(request.POST, request.FILES)
+        # formset=1
 
         if form.is_valid() and formset.is_valid():
             property_instance = form.save(commit=False)
@@ -125,11 +126,15 @@ def sell_property_view(request):
             property_instance.save()
 
             for image_form in formset:
-                image_instance = image_form.save(commit=False)
-                image_instance.property = property_instance
-                image_instance.save()
+                if image_form.cleaned_data.get('image'):  # Ensure image field is not empty
+                    image_instance = image_form.save(commit=False)
+                    image_instance.property = property_instance
+                    image_instance.save()
 
-            return redirect('dashboard')  # Redirect to dashboard or another page
+            messages.success(request, 'Property and images have been uploaded successfully.')
+            return redirect('dashboard')
+        else:
+            messages.error(request, 'There were errors in your submission.')
     else:
         form = PropertyForm()
         formset = PropertyImageFormSet()

@@ -11,6 +11,13 @@ header {
     color: white;
     padding: 10px;
     text-align: center;
+    display: flex;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 header h1 a {
