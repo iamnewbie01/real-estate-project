@@ -58,6 +58,11 @@ class SignUpForm(forms.ModelForm):
         return cleaned_data
 
 class PropertyForm(forms.ModelForm):
+    property_id = forms.IntegerField(
+        label='Property ID',
+        widget=forms.TextInput(attrs={'placeholder': 'Enter Property ID'}),
+        required=True
+    )
     class Meta:
         model = Property
         fields = ['address', 'city', 'price', 'property_type', 'is_rented']

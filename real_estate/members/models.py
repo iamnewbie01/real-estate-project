@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+import os
+from django.conf import settings
+
 
 # 1. City Model
 class City(models.Model):
@@ -41,6 +44,7 @@ class Agent(models.Model):
 
 # 5. Property Model
 class Property(models.Model):
+    property_id = models.AutoField(primary_key=True)
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
     address = models.TextField()
     city = models.ForeignKey(City, on_delete=models.SET_NULL, null=True)
@@ -54,6 +58,8 @@ class Property(models.Model):
 
     def __str__(self):
         return f"{self.property_type} at {self.address}"
+
+
 
 # 6. Landlord Model
 class Landlord(models.Model):
@@ -96,15 +102,12 @@ class Review(models.Model):
     def __str__(self):
         return f"Review by {self.buyer} for {self.property}"
 
+
+def property_image_upload_to(instance, filename):
+    return os.path.join('property_image', str(instance.property.property_id), filename)
+
+
 class PropertyImage(models.Model):
-    property = models.ForeignKey(Property, on_delete=models.CASCADE, related_name="images")
-    image = models.ImageField(upload_to='property_images/%Y/%m/%d/')  # Default path
-    description = models.CharField(max_length=255, blank=True, null=True)
-
-    def save(self, *args, **kwargs):
-        if self.property:
-            self.image.name = f'property_{self.property.id}/{self.image.name}'
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f"Image for {self.property} - {self.description or 'No Description'}"
+    property = models.ForeignKey(Property, related_name='images', on_delete=models.CASCADE)
+    image = models.ImageField(upload_to=property_image_upload_to)
+    description = models.TextField(blank=True, null=True)
