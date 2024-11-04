@@ -80,3 +80,7 @@ class PropertyImageForm(forms.ModelForm):
         fields = ['image', 'description']
 
 PropertyImageFormSet = modelformset_factory(PropertyImage, form=PropertyImageForm, extra=1)
+
+
+class AgentSearchForm(forms.Form):
+    city = forms.ModelChoiceField(queryset=City.objects.all(), label="Select City")

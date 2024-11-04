@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import SignUpForm,PropertyForm,PropertyImageFormSet
+from .forms import SignUpForm,PropertyForm,PropertyImageFormSet , AgentSearchForm
 from .models import Agent
 from django.http import HttpResponseForbidden
 from .models import Property,PropertyImage,Seller
@@ -117,7 +117,7 @@ def buy_property_view(request):
 def sell_property_view(request):
     if not Agent.objects.filter(user=request.user).exists():
         messages.error(request, "You do not have permission to access this page.")
-        return redirect('dashboard')
+        return redirect('/find-agent')
 
     if request.method == 'POST':
         form = PropertyForm(request.POST)
@@ -139,7 +139,7 @@ def sell_property_view(request):
             return redirect('property_detail', property_id=property_instance.id)
 
         else:
-            # Log errors for debugging
+
             print(form.errors)
             print(formset.errors)
             messages.error(request, 'There were errors in your submission.')
@@ -150,14 +150,11 @@ def sell_property_view(request):
     return render(request, 'sell_property.html', {'form': form, 'formset': formset})
 
 def property_detail_view(request, property_id):
-    # Retrieve the property with the specified ID or return a 404 error if not found
     property_instance = get_object_or_404(Property, id=property_id)
-    
-    # Fetch related images, if needed
     images = property_instance.images.all()
     
     if not images:
-        image_url = None  # Or set a default image URL
+        image_url = None
     else:
         image_url = images[0].image.url
     
@@ -166,3 +163,16 @@ def property_detail_view(request, property_id):
         'images': images,
         'image_url': image_url
     })
+
+@login_required
+def find_agent_view(request):
+    if Agent.objects.filter(user=request.user).exists():
+        messages.error(request, "Only regular users can access this view.")
+        return redirect('dashboard') 
+    agents = None
+    form = AgentSearchForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        selected_city = form.cleaned_data['city']
+        agents = Agent.objects.filter(city=selected_city)
+
+    return render(request, 'find_agent.html', {'form': form, 'agents': agents})
