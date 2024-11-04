@@ -58,6 +58,12 @@ class Property(models.Model):
 
     def __str__(self):
         return f"{self.property_type} at {self.address}"
+    
+    def get_agent(self):
+        try:
+            return Agent.objects.get(user=self.seller.user)
+        except Agent.DoesNotExist:
+            return None
 
 
 

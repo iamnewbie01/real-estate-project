@@ -20,6 +20,18 @@
                 <p class="card-text">Price: ${{ property.price }}</p>
                 <p class="card-text">{% if property.for_rent %}For Rent{% else %}For Sale{% endif %}</p>
                 <p class="card-text">Type: {{ property.property_type }}</p>
+                
+                {% with agent=property.get_agent %}
+                    {% if agent %}
+                        <p class="card-text">
+                            <strong>Agent:</strong> {{ agent.user.first_name }} {{ agent.user.last_name }}<br>
+                            <strong>Phone:</strong> {{ agent.phone }}
+                        </p>
+                    {% else %}
+                        <p class="card-text"><em>No agent assigned for this property.</em></p>
+                    {% endif %}
+                {% endwith %}
+                
                 <a href="{% url 'property_detail' property_id=property.property_id %}">View Details</a>
             </div>
         </div>
