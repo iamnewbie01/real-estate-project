@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 {% block content %}
     <h1>Welcome to Your Dashboard, {{ user.username }}!</h1>
-    <div>
+    <h3><a href='http://127.0.0.1:8000/agent-dashboard/sell/'  > List Property</a></h3>
+
+    {% comment %} <div>
         <h2>Your to sell properties</h2>
-    </div>
+    </div> {% endcomment %}
 {%endblock%}
 

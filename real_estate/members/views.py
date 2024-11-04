@@ -7,7 +7,13 @@ from .forms import SignUpForm,PropertyForm,PropertyImageFormSet , AgentSearchFor
 from .models import Agent
 from django.http import HttpResponseForbidden
 from .models import Property,PropertyImage,Seller
+
 from .filters import PropertyFilter
+from django.template.loader import render_to_string
+
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
 
 def home_view(request):
     return render(request, 'home.html')
@@ -75,7 +81,8 @@ def dashboard_view(request):
 
 @login_required
 def agent_dashboard_view(request):
-    return render(request, 'dashboard_agent.html')
+    return render(request,'dashboard_agent.html')
+
 
 # def agent_signup(request):
 #     if request.method == 'POST':
@@ -183,3 +190,22 @@ def find_agent_view(request):
         agents = Agent.objects.filter(city=selected_city)
 
     return render(request, 'find_agent.html', {'form': form, 'agents': agents})
+
+def property_brochure(request, property_id):
+    property = get_object_or_404(Property, pk=property_id)
+    context = {'property': property}
+    
+    # Render the HTML template
+    html = render_to_string('property_brochure.html', context)
+    
+    # Create a response object
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="{property.address}_brochure.pdf"'
+    
+    # Generate PDF
+    pisa_status = pisa.CreatePDF(html, dest=response)
+    
+    if pisa_status.err:
+        return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    
+    return response

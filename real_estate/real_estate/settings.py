@@ -36,7 +36,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'members',  # Add your app name here
-    'django_filters'
+    'django_filters',
+    'xhtml2pdf',
 ]
 
 MIDDLEWARE = [

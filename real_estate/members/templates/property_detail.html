@@ -7,7 +7,7 @@
 <div>
     <h3>{{ property.property_type }} at {{ property.address }}</h3>
     <p><strong>City:</strong> {{ property.city }}</p>
-    <p><strong>Price:</strong> ${{ property.price }}</p>
+    <p><strong>Price:</strong> ₹{{ property.price }}</p>
     <p><strong>For:</strong> {{ property.is_rented|yesno:"Rent,Sell" }}</p>
     
     <!-- Agent Information -->
@@ -33,6 +33,7 @@
         <p>No images available for this property.</p>
     {% endif %}
 </div>
+<a href="{% url 'property_brochure' property_id=property.property_id %}">Download Brochure</a>
 
 <a href="{% url 'dashboard' %}">Back to Dashboard</a>
 {% endblock %}

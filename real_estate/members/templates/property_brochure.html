@@ -1,0 +1,54 @@
+<!-- property_brochure.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Brochure</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .property-details {
+            margin-bottom: 20px;
+        }
+        .property-image {
+            max-width: 100%; /* Make images responsive */
+            height: auto;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Property Brochure for {{ property.address }}</h2>
+
+    <div class="property-details">
+        <h3>{{ property.property_type }}</h3>
+        <p><strong>City:</strong> {{ property.city }}</p>
+        <p><strong>Price:</strong> ₹{{ property.price }}</p>
+        <p><strong>For:</strong> {{ property.is_rented|yesno:"Rent,Sell" }}</p>
+        
+        <!-- Agent Information -->
+        {% with agent=property.get_agent %}
+            {% if agent %}
+                <p><strong>Agent:</strong> {{ agent.user.first_name }} {{ agent.user.last_name }}</p>
+                <p><strong>Phone:</strong> {{ agent.phone }}</p>
+            {% else %}
+                <p><em>No agent assigned for this property.</em></p>
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    {% comment %} <h4>Images:</h4>
+    {% if images %}
+        <div>
+            {% for image in images %}
+                <img src="{{ image.image.url }}" alt="Property image" class="property-image">
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No images available for this property.</p>
+    {% endif %} {% endcomment %}
+</body>
+</html>
