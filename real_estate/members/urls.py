@@ -14,6 +14,6 @@ urlpatterns = [
     path('agent-login/', agent_login_view, name='agent_login'),
     path('agent-dashboard/', agent_dashboard_view, name='agent_dashboard'),
     path('dashboard/buy/', buy_property_view, name='buy'),
-    path('dashboard/sell/', sell_property_view, name='sell'),
+    path('agent-dashboard/sell/', sell_property_view, name='sell'),
     path('property/<int:property_id>/',property_detail_view,name='property_detail'),
 ]

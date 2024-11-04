@@ -22,43 +22,44 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            let formIndex = 0;  // Start from 0
             const container = document.getElementById('image-container');
-            const addImageButton = document.getElementById('add-image-button');
-    
+            let formIndex = container.children.length;  // Start from the current number of forms
+
+            // Function to update the TOTAL_FORMS value
             function updateFormIndex() {
-                // Update the TOTAL_FORMS value based on the current form count
                 document.getElementById('id_form-TOTAL_FORMS').value = container.children.length;
             }
-    
-            // Function to add a new image upload form with a "Remove Image" button
+
+            // Function to add a new image upload form
             function addImageForm() {
                 const newForm = document.createElement('div');
                 newForm.classList.add('image-upload');
                 newForm.setAttribute('data-form-index', formIndex);
-    
+
                 newForm.innerHTML = `
                     <label for="id_form-${formIndex}-image">Image:</label>
-                    <input type="file" name="form-${formIndex}-image" id="id_form-${formIndex}-image">
+                    <input type="file" name="form-${formIndex}-image" id="id_form-${formIndex}-image" required>
                     <label for="id_form-${formIndex}-description">Description:</label>
-                    <input type="text" name="form-${formIndex}-description" id="id_form-${formIndex}-description">
+                    <input type="text" name="form-${formIndex}-description" id="id_form-${formIndex}-description" required>
                     <button type="button" class="remove-image-button">Remove Image</button>
                 `;
+
+                // Append the new form to the container
                 container.appendChild(newForm);
-    
+
                 // Attach event listener to the "Remove Image" button
                 const removeButton = newForm.querySelector('.remove-image-button');
                 removeButton.addEventListener('click', function() {
                     newForm.remove();
                     updateFormIndex();
                 });
-    
-                formIndex++;
+
+                formIndex++;  // Increment index for the next form
                 updateFormIndex();  // Update form count after adding a new form
             }
-    
-            // Initial form addition
-            addImageButton.addEventListener('click', addImageForm);
+
+            // Attach event listener to the "Add Image" button
+            document.getElementById('add-image-button').addEventListener('click', addImageForm);
         });
     </script>
     
