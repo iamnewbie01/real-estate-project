@@ -68,6 +68,8 @@ def logout_view(request):
 
 @login_required
 def dashboard_view(request):
+    if Agent.objects.filter(user=request.user).exists():
+        return render(request, 'dashboard_agent.html')
     return render(request, 'dashboard.html')
 
 @login_required
@@ -113,6 +115,10 @@ def buy_property_view(request):
 
 @login_required
 def sell_property_view(request):
+    if not Agent.objects.filter(user=request.user).exists():
+        messages.error(request, "You do not have permission to access this page.")
+        return redirect('dashboard')
+
     if request.method == 'POST':
         form = PropertyForm(request.POST)
         formset = PropertyImageFormSet(request.POST, request.FILES, queryset=PropertyImage.objects.none())
