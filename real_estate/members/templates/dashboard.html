@@ -5,12 +5,12 @@
     <nav>
         <ul>
             <li><a href="{% url 'buy' %}">Buy property</a></li>
-            <li><a href="{% url 'sell' %}">Sell property</a></li>
+            <li><a href="{% url 'sell' %}">Find Agent</a></li>
         </ul>
     </nav>
     
-    <div>
+    {% comment %} <div>
         <h2>Your Properties</h2>
         <!-- You can display user-specific data here -->
-    </div>
+    </div> {% endcomment %}
 {%endblock%}
