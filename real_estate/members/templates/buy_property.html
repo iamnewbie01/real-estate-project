@@ -3,9 +3,20 @@
 
 {% block content %}
 <h2>Available Properties for Purchase</h2>
+
+<!-- Filter Form -->
+<form method="get" class="mb-4">
+    <div class="row">
+        {{ filter.form.as_p }}
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </div>
+    </div>
+</form>
+
 <div class="row">
-    {% for property in properties %}
-    <div class="col-md-4 mb-4">  <!-- Adjust the column size as needed -->
+    {% for property in filter.qs %}
+    <div class="col-md-4 mb-4">
         <div class="property-card border rounded shadow-sm p-3">
             {% with property_image=property.propertyimage_set.first %}
                 {% if property_image %}

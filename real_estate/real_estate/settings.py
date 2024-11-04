@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'members',  # Add your app name here
+    'django_filters'
 ]
 
 MIDDLEWARE = [

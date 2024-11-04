@@ -7,6 +7,7 @@ from .forms import SignUpForm,PropertyForm,PropertyImageFormSet , AgentSearchFor
 from .models import Agent
 from django.http import HttpResponseForbidden
 from .models import Property,PropertyImage,Seller
+from .filters import PropertyFilter
 
 def home_view(request):
     return render(request, 'home.html')
@@ -111,7 +112,8 @@ def agent_login_view(request):
 @login_required
 def buy_property_view(request):
     properties = Property.objects.all()
-    return render(request, 'buy_property.html', {'properties': properties})
+    property_filter = PropertyFilter(request.GET, queryset=properties)
+    return render(request, 'buy_property.html', {'filter': property_filter})
 
 @login_required
 def sell_property_view(request):
