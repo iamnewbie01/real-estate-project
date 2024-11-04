@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-from .forms import SignUpForm,PropertyForm,PropertyImageFormSet
+from .forms import SignUpForm,PropertyForm,PropertyImageFormSet , AgentSearchForm
 from .models import Agent
 from django.http import HttpResponseForbidden
 from .models import Property,PropertyImage,Seller
@@ -68,6 +68,8 @@ def logout_view(request):
 
 @login_required
 def dashboard_view(request):
+    if Agent.objects.filter(user=request.user).exists():
+        return render(request, 'dashboard_agent.html')
     return render(request, 'dashboard.html')
 
 @login_required
@@ -113,27 +115,34 @@ def buy_property_view(request):
 
 @login_required
 def sell_property_view(request):
+    if not Agent.objects.filter(user=request.user).exists():
+        messages.error(request, "You do not have permission to access this page.")
+        return redirect('/find-agent')
+
     if request.method == 'POST':
         form = PropertyForm(request.POST)
         formset = PropertyImageFormSet(request.POST, request.FILES, queryset=PropertyImage.objects.none())
 
         if form.is_valid() and formset.is_valid():
             property_instance = form.save(commit=False)
-            seller, created = Seller.objects.get_or_create(user=request.user)
-            property_instance.seller = seller
-            property_instance.save()
 
-            for image_form in formset:
-                if image_form.cleaned_data.get('image'):
-                    image_instance = image_form.save(commit=False)
-                    image_instance.property = property_instance
-                    image_instance.save()
+            if Property.objects.filter(property_id=property_instance.property_id).exists():
+                form.add_error('property_id', "This Property ID already exists. Please enter a unique ID.")
+            else:
+                seller, created = Seller.objects.get_or_create(user=request.user)
+                property_instance.seller = seller
+                property_instance.save()
 
-            messages.success(request, 'Property and images have been uploaded successfully.')
-            return redirect('property_detail', property_id=property_instance.id)
+                for image_form in formset:
+                    if image_form.cleaned_data.get('image'):
+                        image_instance = image_form.save(commit=False)
+                        image_instance.property = property_instance
+                        image_instance.save()
+
+                messages.success(request, 'Property and images have been uploaded successfully.')
+                return redirect('property_detail', property_id=property_instance.property_id)  # Change this to property_instance.property_id
 
         else:
-            # Log errors for debugging
             print(form.errors)
             print(formset.errors)
             messages.error(request, 'There were errors in your submission.')
@@ -143,20 +152,32 @@ def sell_property_view(request):
 
     return render(request, 'sell_property.html', {'form': form, 'formset': formset})
 
+
 def property_detail_view(request, property_id):
-    # Retrieve the property with the specified ID or return a 404 error if not found
-    property_instance = get_object_or_404(Property, id=property_id)
-    
-    # Fetch related images, if needed
+    property_instance = get_object_or_404(Property, property_id=property_id)
     images = property_instance.images.all()
-    
-    if not images:
-        image_url = None  # Or set a default image URL
+
+    if images.exists():
+        image_url = images.first().image.url
     else:
-        image_url = images[0].image.url
-    
+        image_url = None
+
     return render(request, 'property_detail.html', {
         'property': property_instance,
         'images': images,
         'image_url': image_url
     })
+
+
+@login_required
+def find_agent_view(request):
+    if Agent.objects.filter(user=request.user).exists():
+        messages.error(request, "Only regular users can access this view.")
+        return redirect('dashboard') 
+    agents = None
+    form = AgentSearchForm(request.POST or None)
+    if request.method == 'POST' and form.is_valid():
+        selected_city = form.cleaned_data['city']
+        agents = Agent.objects.filter(city=selected_city)
+
+    return render(request, 'find_agent.html', {'form': form, 'agents': agents})

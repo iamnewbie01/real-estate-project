@@ -58,6 +58,11 @@ class SignUpForm(forms.ModelForm):
         return cleaned_data
 
 class PropertyForm(forms.ModelForm):
+    property_id = forms.IntegerField(
+        label='Property ID',
+        widget=forms.TextInput(attrs={'placeholder': 'Enter Property ID'}),
+        required=True
+    )
     class Meta:
         model = Property
         fields = ['address', 'city', 'price', 'property_type', 'is_rented']
@@ -80,3 +85,7 @@ class PropertyImageForm(forms.ModelForm):
         fields = ['image', 'description']
 
 PropertyImageFormSet = modelformset_factory(PropertyImage, form=PropertyImageForm, extra=1)
+
+
+class AgentSearchForm(forms.Form):
+    city = forms.ModelChoiceField(queryset=City.objects.all(), label="Select City")

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h2>Find an Agent</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Search</button>
+    </form>
+
+    {% if agents %}
+        <h3>Agents Found:</h3>
+        <ul>
+            {% for agent in agents %}
+                <li>{{ agent.user.username }} - {{ agent.phone }}</li> <!-- Adjust according to agent model fields -->
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No agents found.</p>
+    {% endif %}
+{% endblock %}

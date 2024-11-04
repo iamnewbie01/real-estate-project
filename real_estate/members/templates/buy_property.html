@@ -1,12 +1,43 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 <h2>Available Properties for Purchase</h2>
-<ul>
+<div class="row">
     {% for property in properties %}
-    <li>
-        <a href="{% url 'property_detail' property.id %}">{{ property.address }} - ${{ property.price }}</a>
-    </li>    
+    <div class="col-md-4 mb-4">  <!-- Adjust the column size as needed -->
+        <div class="property-card border rounded shadow-sm p-3">
+            {% with property_image=property.propertyimage_set.first %}
+                {% if property_image %}
+                    <img src="{{ property_image.image.url }}" class="card-img-top" alt="Image of {{ property.address }}">
+                {% else %}
+                    <img src="{% static 'home1.jpeg' %}" class="card-img-top" alt="No image available">
+                {% endif %}
+            {% endwith %}
+
+            <div class="card-body">
+                <h5 class="card-title">{{ property.address }}</h5>
+                <p class="card-text">Price: ${{ property.price }}</p>
+                <p class="card-text">{% if property.for_rent %}For Rent{% else %}For Sale{% endif %}</p>
+                <p class="card-text">Type: {{ property.property_type }}</p>
+                
+                {% with agent=property.get_agent %}
+                    {% if agent %}
+                        <p class="card-text">
+                            <strong>Agent:</strong> {{ agent.user.first_name }} {{ agent.user.last_name }}<br>
+                            <strong>Phone:</strong> {{ agent.phone }}
+                        </p>
+                    {% else %}
+                        <p class="card-text"><em>No agent assigned for this property.</em></p>
+                    {% endif %}
+                {% endwith %}
+                
+                <a href="{% url 'property_detail' property_id=property.property_id %}">View Details</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>No properties available for purchase at this time.</p>
     {% endfor %}
-</ul>
+</div>
 {% endblock %}
